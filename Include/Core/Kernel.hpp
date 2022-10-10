@@ -11,7 +11,7 @@ namespace System
         extern System::HAL::Drivers::Video::VBE Video;
         extern System::Debug::Serial Serial;
         extern System::Common::Terminal Terminal;
-        extern system::core::memory::heap_t heap;
+        extern System::core::memory::heap_t heap;
         void PrepareKernel(multiboot_info_t* mboot);
         void Loaded();
         void Run();

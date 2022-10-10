@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-namespace system::core::memory
+namespace System::core::memory
 {
     enum class heap_type
     {

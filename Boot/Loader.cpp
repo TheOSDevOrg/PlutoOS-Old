@@ -7,9 +7,9 @@ Loader by: Nicola Leone Ciardi and Kevin Meerts
 #include <Core/Kernel.hpp>
 #include <Core/env.hpp>
 
-system::core::memory::heap_t *system::env::current_heap;
-system::core::memory::heap_t system::env::common_heap;
-system::core::memory::heap_t system::env::lostfound_heap;
+System::core::memory::heap_t *System::env::current_heap;
+System::core::memory::heap_t System::env::common_heap;
+System::core::memory::heap_t System::env::lostfound_heap;
 extern "C"
 {
     extern uint32_t kernel_end;
@@ -46,10 +46,10 @@ void *mboot;
 __cdecl void __init()
 {
     System::Kernel::heap.init((uintptr_t)regions.kernel_heap, (uintptr_t)regions.common_heap - (uintptr_t)regions.kernel_heap, true);
-    system::env::common_heap.init((uintptr_t)regions.common_heap, (uintptr_t)regions.lf_heap-(uintptr_t)regions.common_heap, true);
-    system::env::lostfound_heap.init((uintptr_t)regions.lf_heap, regions.end-(uintptr_t)regions.lf_heap, true);
+    System::env::common_heap.init((uintptr_t)regions.common_heap, (uintptr_t)regions.lf_heap-(uintptr_t)regions.common_heap, true);
+    System::env::lostfound_heap.init((uintptr_t)regions.lf_heap, regions.end-(uintptr_t)regions.lf_heap, true);
 
-    system::env::current_heap = &System::Kernel::heap;
+    System::env::current_heap = &System::Kernel::heap;
     PrepareKernel((multiboot_info_t*)mboot);
     Loaded();
     for(;;) Run();

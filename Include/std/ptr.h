@@ -3,7 +3,6 @@
 #include <Common/Memory/memory.hpp>
 #include <stdint.h>
 #include <std/decl.h>
-#include <Core/Kernel.hpp>
 
 namespace std
 {

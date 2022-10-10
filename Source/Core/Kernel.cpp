@@ -11,7 +11,7 @@ namespace System
 {
     namespace Kernel
     {
-        using namespace system::core::memory;
+        using namespace System::core::memory;
         heap_t heap;
         System::HAL::Drivers::Video::VBE Video;
         System::Debug::Serial Serial;

@@ -8,7 +8,7 @@
 #define MAGIC 0xAEFB
 
 using namespace std;
-using namespace system::core::memory;
+using namespace System::core::memory;
 
 ptr<data_t> heap_t::create_entry(size_t sz)
 {
