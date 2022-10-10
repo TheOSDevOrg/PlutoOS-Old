@@ -4,5 +4,3 @@
 *.o
 *.a
 Docs/*
-objs/*
-out/*
