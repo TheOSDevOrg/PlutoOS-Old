@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <std/decl.h>
 #include <stdarg.h>
+#include <Common/Memory/memory.hpp>
 __cdecl void memcpyd(uint32_t *dst, uint32_t *src, size_t sz);
 __cdecl void memsetd(uint32_t *dst, uint16_t data, size_t sz);
 

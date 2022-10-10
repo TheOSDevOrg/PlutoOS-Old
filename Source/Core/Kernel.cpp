@@ -2,6 +2,7 @@
 #include <Common/mult.hpp>
 #include <HAL/Drivers/Storage/UStar.hpp>
 #include <Lib/String.hpp>
+
 extern "C" {
     extern uint32_t kernel_end;
     extern uint32_t kernel_start;
@@ -10,6 +11,8 @@ namespace System
 {
     namespace Kernel
     {
+        using namespace system::core::memory;
+        heap_t heap;
         System::HAL::Drivers::Video::VBE Video;
         System::Debug::Serial Serial;
         System::Common::Terminal Terminal;
@@ -38,6 +41,10 @@ namespace System
             printf("Total Memory: %d MB",mem_get_total_mb());
             printf("Contents of Ramdisk:\n");
             tar_list_all();
+            char* test = (char*)malloc(20);
+            memset(test,0,20);
+            memcpy((void*)test,(char*)"Hello World!",12);
+            printf("Test: %s",test);
         }
         void Run()
         {
