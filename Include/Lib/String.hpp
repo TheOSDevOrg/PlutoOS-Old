@@ -47,3 +47,12 @@ static inline int stroct(const char* str)
 {
 	return strnum(str, 8);
 }
+// allocate overloads
+extern void *operator new(size_t size);
+extern void *operator new[](size_t size);
+
+// delete overloads
+extern void operator delete(void *p);
+extern void operator delete(void *p, size_t size);
+extern void operator delete[](void *p);
+extern void operator delete[](void *p, size_t size);

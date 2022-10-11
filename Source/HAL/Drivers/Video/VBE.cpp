@@ -44,6 +44,13 @@ namespace System
                     ssfn_dst.y = 0;
 
                 }
+                void VBE::SetPixel(uint32_t x, uint32_t y, uint32_t color)
+                {
+                    if(x >= Width || y >= Height)
+                        return;
+                   //lets set the pixel with pitch
+                   buf.buffer[y * (Pitch / 4) + x] = color;
+                }
                 void VBE::DrawChar(char c)
                 {
                     if(c == '\n') {
@@ -116,6 +123,23 @@ namespace System
                 uint32_t* VBE::GetBuffer()
                 {
                     return Buffer;
+                }
+                void VBE::DrawBitmap(int32_t x, int32_t y, GFX::Bitmap* bitmap)
+                {
+                    if (bitmap == nullptr) { return; }
+
+                    int32_t w = bitmap->Width;
+                    int32_t h = bitmap->Height;
+
+                    uint32_t* data = (uint32_t*)bitmap->ImageData;
+                    for (int32_t yy = 0; yy < h; yy++)
+                    {
+                        for (int32_t xx = 0; xx < w; xx++)
+                        {
+                            uint32_t color = data[(xx + (yy * w))];
+                            SetPixel(x + xx, y + yy, color);
+                        }
+                    }
                 }
             }
         }

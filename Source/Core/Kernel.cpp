@@ -5,6 +5,7 @@
 #include <Graphics/colors.hpp>
 #include <HAL/Interrupts/idt.hpp>
 #include <HAL/Interrupts/gdt.hpp>
+#include <Graphics/bitmapimage.hpp>
 extern "C" {
     extern uint32_t kernel_end;
     extern uint32_t kernel_start;
@@ -33,6 +34,8 @@ namespace System
             Video.Init();
             Video.Clear();
             Video.LoadFont();
+            GFX::Bitmap* bmp = new GFX::Bitmap("./bg.bmp");
+            Video.DrawBitmap(20,20,bmp);
             Terminal.Init();
             gdt::manager_t::load_gdt();
             idt::manager_t::init();
