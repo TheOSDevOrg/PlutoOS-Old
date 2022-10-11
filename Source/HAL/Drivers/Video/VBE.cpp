@@ -4,6 +4,7 @@
 #include <Common/mult.hpp>
 #include <Core/Kernel.hpp>
 #include <stdint.h>
+#include <Graphics/buffer.hpp>
 #include <HAL/Drivers/Storage/UStar.hpp>
 #define SSFN_CONSOLEBITMAP_TRUECOLOR
 #include <std/ssfn.hpp>
@@ -20,16 +21,20 @@ namespace System
         {
             namespace Video
             {
+                using namespace System::Graphics;
+                buffer_t buf;
                 void VBE::Init()
                 {
                     Buffer = (uint32_t*)System::Common::Get()->framebuffer_addr;
                     Width = System::Common::Get()->framebuffer_width;
                     Height = System::Common::Get()->framebuffer_height;
                     Pitch = System::Common::Get()->framebuffer_pitch;
+                    Size = Width * Height * 4;
+                    buf = System::Graphics::Init(Width, Height);
                 }
                 void VBE::LoadFont()
                 {
-                    ssfn_dst.ptr = (uint8_t*)Buffer;                  /* address of the linear frame buffer */
+                    ssfn_dst.ptr = (uint8_t*)buf.buffer;                  /* address of the linear frame buffer */
                     ssfn_dst.w = Width;                          /* width */
                     ssfn_dst.h = Height;                           /* height */
                     ssfn_dst.p = Pitch;                          /* bytes per line */
@@ -65,6 +70,24 @@ namespace System
                         ssfn_putc(str[i]);
                         i++;
                     }
+                }
+                void VBE::Clear()
+                {
+                    for(int i = 0; i < Size; i++)
+                    {
+                        Buffer[i] = 0x00000000;
+                    }
+                }
+                void VBE::Clear(uint32_t color)
+                {
+                    for(int i = 0; i < buf.size; i++)
+                    {
+                        buf.buffer[i] = color;
+                    }
+                }
+                void VBE::Render()
+                {
+                    memcpyd((uint32_t*)Buffer, buf.buffer, Size);
                 }
                 void VBE::Disable()
                 {

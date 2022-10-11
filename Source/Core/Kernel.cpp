@@ -2,7 +2,7 @@
 #include <Common/mult.hpp>
 #include <HAL/Drivers/Storage/UStar.hpp>
 #include <Lib/String.hpp>
-
+#include <Graphics/colors.hpp>
 extern "C" {
     extern uint32_t kernel_end;
     extern uint32_t kernel_start;
@@ -28,6 +28,7 @@ namespace System
             ramdisk_init(ramdisk,rd_size);
             
             Video.Init();
+            Video.Clear();
             Video.LoadFont();
             Terminal.Init();
             
@@ -48,6 +49,7 @@ namespace System
         }
         void Run()
         {
+            Video.Render();
         }
     }
 }

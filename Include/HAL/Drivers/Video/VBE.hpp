@@ -14,6 +14,9 @@ namespace System
                     public:
                         void Init();
                         void SetMode(int w, int h);
+                        void Clear();
+                        void Clear(uint32_t color);
+                        void Render();
                         void Disable();
                         void DrawChar(char c);
                         void DrawString(int x, int y, char* str);
