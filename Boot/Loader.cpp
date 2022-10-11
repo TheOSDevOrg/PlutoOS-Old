@@ -58,7 +58,7 @@ __cdecl void __init()
 __cdecl void _start()
 {
     asm volatile("cli");
-    uintptr_t stack = (uintptr_t)regions.kernel_stack + 2*1024*1024;
+    uintptr_t stack = (uintptr_t)regions.kernel_stack + 20*1024*1024;
 
     asm("movl %0, %%esp" : : "m"(stack));
     asm("movl %0, %%ebp" : : "m"(stack));

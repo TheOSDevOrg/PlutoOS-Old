@@ -98,7 +98,10 @@ namespace System
                 }
                 void VBE::Render()
                 {
-                    memcpyd((uint32_t*)Buffer, buf.buffer, Size);
+                   for(int i = 0; i < Size; i++)
+                   {
+                       Buffer[i] = buf.buffer[i];
+                   }
                 }
                 void VBE::Disable()
                 {

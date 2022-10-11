@@ -30,11 +30,11 @@ namespace System
             ramdisk = (uint8_t*)GetModule(0);
             rd_size = tar_calc_size();
             ramdisk_init(ramdisk,rd_size);
-            
+            GFX::Bitmap* bmp = new GFX::Bitmap("./bg.bmp");
             Video.Init();
             Video.Clear();
             Video.LoadFont();
-            GFX::Bitmap* bmp = new GFX::Bitmap("./bg.bmp");
+            
             Video.DrawBitmap(20,20,bmp);
             Terminal.Init();
             gdt::manager_t::load_gdt();

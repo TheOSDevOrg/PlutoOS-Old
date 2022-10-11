@@ -41,7 +41,7 @@ namespace GFX
         Depth = (COLOR_DEPTH)info->biBitCount;
         if (Width == 0 || Height == 0 || Depth == 0 || TotalSize < 0) { printf("Unable to locate file"); return; }
 
-        uint32_t* new_data = (uint32_t*)malloc(Width * Height * 4);
+        uint32_t* new_data = (uint32_t*)alloc(Width * Height * 4);
         for (int32_t yy = Height - 1; yy >= 0; yy--)
         {
             for (int32_t xx = 0; xx < Width; xx++)
@@ -63,63 +63,6 @@ namespace GFX
             }
         }  
         ImageData = (uint8_t*)new_data;
-
-        /*
-        if(fat_master_fs != nullptr)
-        {
-            // open file
-            file_t *f = fopen(fullname, NULL);
-
-            // file was located
-            if(f)
-            { 
-                // print filename
-                System::KernelIO::Write("Loading bitmap '");
-                System::KernelIO::Write(fullname);
-                System::KernelIO::Write("'\n");
-
-                struct directory dir;
-                fat_populate_root_dir(fat_master_fs, &dir);
-                uint32_t size = fat_get_file_size(fullname);
-
-                // read data from disk
-                void* buf = mem_alloc(size);
-                fread(buf, size, 1, (file_t*)f);
-
-                bmp_fileheader_t* h = (bmp_fileheader_t*)buf;
-                uint32_t offset = h->bfOffBits;
-                debug_writeln_dec("BMP SIZE:   ", h->bfSize);
-                debug_writeln_dec("BMP OFFSET: ", offset);
-
-                bmp_infoheader_t* info = (bmp_infoheader_t*)(buf + sizeof(bmp_fileheader_t));
-                
-                Width = info->biWidth;
-                Height = info->biHeight;
-                ImageData = (uint8_t*)((uint32_t)buf + offset);
-                Buffer = (uint8_t*)buf;
-                TotalSize = size;
-                Depth = (COLOR_DEPTH)info->biBitCount;
-                
-
-                debug_writeln_dec("BMP WIDTH:  ", Width);
-                debug_writeln_dec("BMP HEIGHT: ", Height);
-                debug_writeln_dec("BMP DEPTH:  ", (uint32_t)Depth);
-                debug_writeln_dec("BMP SIZE:   ", TotalSize);
-
-                fclose(f);
-            }
-            // unable to locate file
-            else
-            {
-                // print filename
-                System::KernelIO::Write("["); System::KernelIO::Write("  !!  "); System::KernelIO::Write("] ");
-                System::KernelIO::Write("Unable to load bitmap '");
-                System::KernelIO::Write(fullname);
-                System::KernelIO::Write("'\n");
-                return;
-            }
-        }  
-        */
     }
 
     Bitmap::~Bitmap()

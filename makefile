@@ -35,6 +35,7 @@ LINK_SOURCES=$(shell find $(OBJ_DIR) -name '*.o' -not -path "initrd/*")
 .PHONY: all
 
 all: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs grub run-kvm
+boot-pc: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs pc
 bochs: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link grub run-bochs
 video: loadervid $(C_FILES_OUT) $(CXX_FILES_OUT) $(AS_FILES_OUT) $(NASM_FILES_OUT) link grub run-kvm
 
@@ -108,3 +109,9 @@ ramfs:
 
 docs:
 	doxygen Doxyfile
+
+pc:
+	sudo cp $(OUT_DIR)/kernel.bin /boot
+	sudo mkdir -p /boot/initrd
+	sudo cp initrd.img /boot/initrd
+	sudo grub-mkconfig -o /boot/grub/grub.cfg
