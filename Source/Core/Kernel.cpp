@@ -35,7 +35,7 @@ namespace System
             Video.Clear();
             Video.LoadFont();
             
-            Video.DrawBitmap(20,20,bmp);
+            Video.DrawBitmap(0,0,bmp);
             Terminal.Init();
             gdt::manager_t::load_gdt();
             idt::manager_t::init();

@@ -35,8 +35,9 @@ LINK_SOURCES=$(shell find $(OBJ_DIR) -name '*.o' -not -path "initrd/*")
 .PHONY: all
 
 all: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs grub run-kvm
+sysl: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs syslinux run-kvm
 boot-pc: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs pc
-bochs: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link grub run-bochs
+bochs: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs grub run-bochs
 video: loadervid $(C_FILES_OUT) $(CXX_FILES_OUT) $(AS_FILES_OUT) $(NASM_FILES_OUT) link grub run-kvm
 
 build: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link grub
@@ -71,6 +72,16 @@ grub:
 	mv initrd.img isoroot/initrd
 	@cp Configs/grub.cfg isoroot/boot/grub
 	@grub-mkrescue -o $(OUT_DIR)/$(NAME).iso isoroot -V "Commander"
+	@rm -rf isoroot
+syslinux:
+	@mkdir -p isoroots/boot/grub
+	@mkdir -p isoroots/mods
+	mkdir -p isoroots/initrd
+#	echo "test" >> isoroot/mods/test_txt.mod
+	@cp $(OUT_DIR)/kernel.bin isoroots/
+	mv initrd.img isoroots/
+	@cp Configs/syslinux.cfg isoroots/
+	@syslinux -d isoroots -o out/test.iso
 	@rm -rf isoroot
 
 $(OBJ_DIR)/%.cpp.o: $(SRC_DIR)/%.cpp

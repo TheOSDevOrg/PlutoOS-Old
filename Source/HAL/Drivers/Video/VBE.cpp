@@ -2,6 +2,7 @@
 #include <Lib/String.hpp>
 #include <Common/realmode.hpp>
 #include <Common/mult.hpp>
+#include <boot/mboot.h>
 #include <Core/Kernel.hpp>
 #include <stdint.h>
 #include <Graphics/buffer.hpp>
@@ -25,13 +26,63 @@ namespace System
                 buffer_t buf;
                 void VBE::Init()
                 {
-                    Buffer = (uint32_t*)System::Common::Get()->framebuffer_addr;
-                    Width = System::Common::Get()->framebuffer_width;
-                    Height = System::Common::Get()->framebuffer_height;
-                    Pitch = System::Common::Get()->framebuffer_pitch;
-                    Size = Width * Height * 4;
                     buf = System::Graphics::Init(Width, Height);
                 }
+                    void VBE::SetMode(int w, int h)
+    {
+        FillHeaders();
+        registers16_t regs;
+        memset(&regs, 0, sizeof(registers16_t));
+        
+        vbe_mode_info_t* minfo = (vbe_mode_info_t*)(VBE_CTRL_PTR + sizeof(vbe_ctrl_info_t) + 512);
+        uint16_t* modes = (uint16_t*)REAL_PTR(CtrlInfo.videomode);
+        uint16_t mode;
+
+        for (int i = 0; modes[i] != 0xFFFF; i++)
+        {
+            regs.ax = 0x4F01;
+            regs.cx = modes[i];
+            regs.es = SEG(minfo);
+            regs.di = OFF(minfo);
+            int32(0x10, &regs);
+
+            if (minfo->width == w && minfo->height == h && minfo->depth == 32)
+            {
+                mode = modes[i];
+                regs.ax = 0x4F02;
+                regs.bx = mode | 0x4000;
+                int32(0x10, &regs);
+                ModeInfo = *minfo;
+                Size     = ModeInfo.width * ModeInfo.height * 4;
+                 System::Kernel::Serial.Dprintf("VBE: %d x %d x %d", ModeInfo.width, ModeInfo.height, ModeInfo.depth);
+                    Buffer = (uint32_t*)ModeInfo.physical_base;
+                    Width = ModeInfo.width;
+                    Height = ModeInfo.height;
+                    Pitch = ModeInfo.pitch;
+                    Size = Width * Height * 4;
+                return;
+            }
+        }
+    }
+    void VBE::FillHeaders()
+    {
+        memset(&ModeInfo, 0, sizeof(vbe_mode_info_t));
+        memset(&CtrlInfo, 0, sizeof(vbe_ctrl_info_t));
+        vbe_ctrl_info_t* info = (vbe_ctrl_info_t*)VBE_CTRL_PTR;
+        registers16_t regs;
+
+        memset(&regs, 0, sizeof(registers16_t));
+        regs.ax = 0x4F00;
+        regs.es = 0x8000;
+        regs.di = 0x0000;
+        int32(0x10, &regs);
+
+        if (regs.ax != 0x4F) {  return; }
+        CtrlInfo = *info;
+        ModeInfo = *(vbe_mode_info_t*)System::Common::Get()->vbe_mode_info;
+        Size     = ModeInfo.width * ModeInfo.height * 4;
+       
+    }
                 void VBE::LoadFont()
                 {
                     ssfn_dst.ptr = (uint8_t*)buf.buffer;                  /* address of the linear frame buffer */

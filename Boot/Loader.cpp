@@ -6,7 +6,13 @@ Loader by: Nicola Leone Ciardi and Kevin Meerts
 #include <boot/loader.h>
 #include <Core/Kernel.hpp>
 #include <Core/env.hpp>
-
+#define LNG_PTR(seg, off) ((seg << 4) | off)
+#define REAL_PTR(arr) LNG_PTR(arr[1], arr[0])
+#define VBE_CTRL_PTR 0x80000
+#define SEG(addr) (((uint32_t)addr >> 4) & 0xF000)
+#define OFF(addr) ((uint32_t)addr & 0xFFFF)
+#include <Common/realmode.hpp>
+#include <Lib/String.hpp>
 System::core::memory::heap_t *System::env::current_heap;
 System::core::memory::heap_t System::env::common_heap;
 System::core::memory::heap_t System::env::lostfound_heap;
@@ -14,7 +20,7 @@ extern "C"
 {
     extern uint32_t kernel_end;
 }
-#define VBE_MODE
+//#define VBE_MODE
 using namespace System::Kernel;
 multiboot_header_loader multiboot section__(.multiboot) = {
     .magic = LOADER_MAGIC,
@@ -43,6 +49,10 @@ multiboot_header_loader multiboot section__(.multiboot) = {
 memory_regions regions;
 
 void *mboot;
+__cdecl void best_resol_from_grub()
+{
+
+}
 __cdecl void __init()
 {
     System::Kernel::heap.init((uintptr_t)regions.kernel_heap, (uintptr_t)regions.common_heap - (uintptr_t)regions.kernel_heap, true);
@@ -50,7 +60,10 @@ __cdecl void __init()
     System::env::lostfound_heap.init((uintptr_t)regions.lf_heap, regions.end-(uintptr_t)regions.lf_heap, true);
 
     System::env::current_heap = &System::Kernel::heap;
+    System::Kernel::Video.SetMode(800,600);
     PrepareKernel((multiboot_info_t*)mboot);
+    
+  // System::Kernel::Video.SetMode(800,600);
     Loaded();
     for(;;) Run();
 }
