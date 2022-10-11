@@ -73,6 +73,8 @@ namespace System
                 }
                 void VBE::Clear()
                 {
+                    ssfn_dst.x = 0;
+                    ssfn_dst.y = 0;
                     for(int i = 0; i < Size; i++)
                     {
                         Buffer[i] = 0x00000000;
@@ -80,6 +82,8 @@ namespace System
                 }
                 void VBE::Clear(uint32_t color)
                 {
+                    ssfn_dst.x = 0;
+                    ssfn_dst.y = 0;
                     for(int i = 0; i < buf.size; i++)
                     {
                         buf.buffer[i] = color;
