@@ -49,6 +49,7 @@ namespace System
             printf("Kernel Size: %d bytes\n",&kernel_end-&kernel_start);
             printf("Total Memory: %d MB\n",mem_get_total_mb());
             idt::manager_t::enable_interrupts();
+            heap.print_table();
            // asm("int $0x0");
         }
         void Run()

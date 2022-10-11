@@ -10,7 +10,7 @@ LD=i686-elf-ld
 NASM=nasm
 AS=i686-elf-as
 
-NAME=Strap
+NAME=PlutoOS
 
 CXXFLAGS=-fno-threadsafe-statics -IInclude -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers
 CFLAGS=-fno-threadsafe-statics -IInclude -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers

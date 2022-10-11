@@ -36,14 +36,14 @@ ptr<data_t> heap_t::create_entry(size_t sz)
     _stream.seek(_stream.tell() + sz);
 
     _entries_count++;
-    //dprint_info("a new heap entry was created");
+    System::Kernel::Serial.Dprintf("a new heap entry was created\n");
     return n;
 }
 ptr<data_t> heap_t::combine_entries(ptr<data_t> left, ptr<data_t> right)
 {
     if (left->magic != MAGIC)
     {
-    //    fatal("tried to combine two non-entries");
+        System::Kernel::Serial.Dprintf("tried to combine two non-entries\n");
         return left;
     }
     //if (!dbgio::serial) return left;
@@ -57,7 +57,7 @@ ptr<data_t> heap_t::combine_entries(ptr<data_t> left, ptr<data_t> right)
     left->type = data_type::UNDEFINED;
 
     _entries_count--;
- //   dprint_debug("two heap entries were combined");
+    System::Kernel::Serial.Dprintf("two heap entries were combined\n");
     return left;
 }
 ptr<data_t> heap_t::shrink_entry(ptr<data_t> e, size_t s)
@@ -66,7 +66,7 @@ ptr<data_t> heap_t::shrink_entry(ptr<data_t> e, size_t s)
     if (e.is_null()) return nullptr;
     if (e->magic != MAGIC)
     {
-  //      fatal("tried to shrink a non-entry");
+        System::Kernel::Serial.Dprintf("tried to shrink a non-entry\n");
         return e;
     }
 
@@ -85,7 +85,7 @@ ptr<data_t> heap_t::shrink_entry(ptr<data_t> e, size_t s)
     n->type = data_type::UNDEFINED;
     n->magic = MAGIC;
 
- //   dprint_info("a heap entry was shrank");
+    System::Kernel::Serial.Dprintf("a heap entry was shrank\n");
     _entries_count++;
     return e;
 }
@@ -122,7 +122,7 @@ void heap_t::defragment(bool silent)
 
         if (_prev->free && _curr->free)
         {
-            //if(dbgio::serial) system::kernel::ttys[1]->write_line("combining entries");
+            //if(dbgio::serial) system::kernel::ttys[1]->write("combining entries");
             _curr = combine_entries(_prev, _curr);
             y--;
         }
@@ -132,7 +132,7 @@ void heap_t::defragment(bool silent)
     }
 
     if (!silent) {
-        //dprint_info("heap defragmentation complete");
+        System::Kernel::Serial.Dprintf("heap defragmentation complete\n");
     }
 }
 
@@ -165,14 +165,14 @@ void *heap_t::unsafe_alloc(size_t size, data_type type)
 
     if (_curr == nullptr)
     {
-      //  fatal("ALLOC: no memory left for allocation");
+        System::Kernel::Serial.Dprintf("ALLOC: no memory left for allocation\n");
         return nullptr;
     }
 
     _curr->free = false;
     _curr->type = type;
     
- //   dprint_info("allocated new entry");
+    System::Kernel::Serial.Dprintf("allocated new entry\n");
 
     if (_curr->dirty) memset(res, 0, size);
     return res;
@@ -181,12 +181,12 @@ bool heap_t::free(void *data)
 {
     if (data == nullptr)
     {
-    //    dprint_warn("tried to free nullptr");
+        System::Kernel::Serial.Dprintf("tried to free nullptr\n");
         return false;
     }
     else if (!contains((uintptr_t) data))
     {
-     //   dprint_warn("tried to free an address outside the heap");
+        System::Kernel::Serial.Dprintf("tried to free an address outside the heap\n");
         return false;
     }
 
@@ -194,19 +194,19 @@ bool heap_t::free(void *data)
 
     if (_entry->free)
     {
-    //    dprint_info("tried to free an already free entry");
+        System::Kernel::Serial.Dprintf("tried to free an already free entry\n");
         return false;
     }
     else if (_entry->magic != MAGIC)
     {
-     //   dprint_warn("tried to free a non-entry");
+        System::Kernel::Serial.Dprintf("tried to free a non-entry\n");
         return false;
     }
 
     _entry->dirty = true;
     _entry->free = true;
 
- //   dprint_info("free'd entry");
+    System::Kernel::Serial.Dprintf("free'd entry\n");
     defragment();
     return true;
 }
@@ -228,39 +228,28 @@ void heap_t::print_table()
     }
 
     numstr(used, 10, s);
-   /* system::kernel::ttys[2]->write(s);
+    printf(s);
 
-    system::kernel::ttys[2]->write('/');
+    printf("/");
 
     uint32_t u = _entries_count;
 
     numstr(_entries_count, 10, s);
-    system::kernel::ttys[2]->write(s);
+    printf(s);
 
-    system::kernel::ttys[2]->write(" entries used (");
+    printf(" entries used (");
 
     numstr(u-used, 10, s);
-    system::kernel::ttys[2]->write(s);
+    printf(s);
 
-    system::kernel::ttys[2]->write_line(" free)");
+    printf(" free)\n");
 
     numstr(zero_sz, 10, s);
-    system::kernel::ttys[2]->write(s);
-    system::kernel::ttys[2]->write_line(" entries with size 0");
+    printf(s);
+    printf(" entries with size 0\n");
 
     numstr(invalid_sz, 10, s);
-    system::kernel::ttys[2]->write(s);
-    system::kernel::ttys[2]->write_line(" invalid entries");
+    printf(s);
+    printf(" invalid entries\n");
 
-    system::kernel::ttys[3]->write_line("visualizer:");
-    for (int i = 0; i < _entries_count; i++)
-    {
-        char s[4];
-        auto e = at(i);
-        numstr(e->size, 10, s);
-        system::kernel::ttys[3]->write(s);
-        if(!e->free) system::kernel::ttys[3]->write('*');
-        system::kernel::ttys[3]->write(" ");
-    }
-    system::kernel::ttys[3]->write_line("");*/
 }
