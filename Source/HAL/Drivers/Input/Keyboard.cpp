@@ -4,11 +4,14 @@
 #include <Core/Kernel.hpp>
 #define ESCAPE 1
 #define SHIFT 42
+#define SHIFT_R 54
 #define SHIFT_RELEASE -86
+#define SHIFT_R_RELEASE -74
 #define CAPSLOCK 58
 #define BACKSPACE 14
 #define PAGEUP 73
 #define PAGEDOWN 81
+//#define KEYBOARD_PRINTCODE
 namespace System
 {
     namespace HAL
@@ -33,6 +36,12 @@ namespace System
                         shift = 1;
                         break;
                         case SHIFT_RELEASE:
+                        shift = 0;
+                        break;
+                        case SHIFT_R:
+                        shift = 1;
+                        break;
+                        case SHIFT_R_RELEASE:
                         shift = 0;
                         break;
                         case CAPSLOCK:
@@ -71,7 +80,7 @@ extern "C"
 		keycode = inb(0x60);
         System::Kernel::Keyboard.HandleKey(keycode);
         #ifdef KEYBOARD_PRINTCODE
-        printf("%s\n", keycode);
+        printf("%d\n", keycode);
         #endif
 	}
 }
