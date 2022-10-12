@@ -6,6 +6,9 @@
 #include <HAL/Interrupts/idt.hpp>
 #include <HAL/Interrupts/gdt.hpp>
 #include <Graphics/bitmapimage.hpp>
+#include <HAL/Drivers/Input/Keyboard.hpp>
+#include <HAL/Drivers/Input/LayoutGerman.hpp>
+
 extern "C" {
     extern uint32_t kernel_end;
     extern uint32_t kernel_start;
@@ -20,6 +23,7 @@ namespace System
         System::HAL::Drivers::Video::VBE Video;
         System::Debug::Serial Serial;
         System::Common::Terminal Terminal;
+        System::HAL::Drivers::Input::Keyboard Keyboard;
         uint8_t* ramdisk;
         size_t rd_size;
         using namespace System::Common;
@@ -50,6 +54,8 @@ namespace System
             printf("Total Memory: %d MB\n",mem_get_total_mb());
             idt::manager_t::enable_interrupts();
             heap.print_table();
+            Keyboard.Initialize();
+            Keyboard.SetLayout(KeyboardLayout::Layout::German::LayoutDEdeLower,KeyboardLayout::Layout::German::LayoutDEdeUpper);
            // asm("int $0x0");
         }
         void Run()
